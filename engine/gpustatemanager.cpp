@@ -141,6 +141,9 @@ void MatrixStack::Multiply( const grinliz::Matrix4& m )
 
 /*static*/ bool GPUShader::SupportsVBOs()
 {
+#ifdef __PLAYBOOK__
+	return true;
+#endif
 #ifdef EL_USE_VBO
 	if ( vboSupport == 0 ) {
 		const char* extensions = (const char*)glGetString( GL_EXTENSIONS );

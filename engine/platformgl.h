@@ -26,7 +26,7 @@
 	#define glFrustumfX		glFrustumf
 	#define glOrthofX		glOrthof
 	#define USING_ES
-#elif defined (ANDROID_NDK)
+#elif defined (ANDROID_NDK) || defined (__PLAYBOOK__)
 	#include <GLES/gl.h>
 	#define glFrustumfX		glFrustumf
 	#define glOrthofX		glOrthof

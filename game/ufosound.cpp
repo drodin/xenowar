@@ -75,6 +75,13 @@ bool SoundManager::PopSound( int* _databaseID, int* _offset, int* _size )
 //	sndItem = database->ChainItem( sndItem );
 
 	if ( sndItem ) {
+#ifdef __PLAYBOOK__
+		nSounds--;
+		*_databaseID = database->DatabaseID();
+		*_offset = (int) database->AccessData( sndItem, "binary", &size );
+		*_size = size;
+		return true;
+#else
 		sndItem->GetDataInfo( "binary", &offset, &size, &compressed );
 		GLRELASSERT( size );
 		GLRELASSERT( !compressed );
@@ -88,6 +95,7 @@ bool SoundManager::PopSound( int* _databaseID, int* _offset, int* _size )
 			*_size = size;
 			return true;
 		}
+#endif
 	}
 	return false;
 }

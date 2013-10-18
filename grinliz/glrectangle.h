@@ -28,6 +28,8 @@ distribution.
 
 #include "glvector.h"
 
+#include <limits.h>
+
 namespace grinliz {
 
 

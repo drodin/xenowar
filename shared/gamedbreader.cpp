@@ -27,6 +27,8 @@
 #include "gamedbreader.h"
 #ifdef ANDROID_NDK
 #	include <zlib.h>		// Built in zlib support.
+#elif __PLAYBOOK__
+#	include <zlib.h>
 #else
 #	include "../zlib/zlib.h"
 #endif

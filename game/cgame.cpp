@@ -31,6 +31,10 @@ extern "C" int androidResourceLen;
 extern "C" char androidResourcePath[200];
 #endif
 
+#ifdef __PLAYBOOK__
+#include "../playbook/main.h"
+#endif
+
 #include "../grinliz/glstringutil.h"
 
 
@@ -211,6 +215,10 @@ void PlatformPathToResource( char* buffer, int bufferLen, int* offset, int* leng
 	grinliz::StrNCpy( buffer, androidResourcePath, bufferLen );
 	*offset = androidResourceOffset;
 	*length = androidResourceLen;
+#elif defined (__PLAYBOOK__)
+	grinliz::StrNCpy( buffer, playbookResourcePath, bufferLen );
+	*offset = 0;
+	*length = 0;
 #else
 #	error UNDEFINED
 #endif
@@ -221,7 +229,7 @@ const char* PlatformName()
 {
 #if defined( UFO_WIN32_SDL )
 	return "pc";
-#elif defined (ANDROID_NDK)
+#elif defined (ANDROID_NDK) || defined (__PLAYBOOK__)
 	return "android";
 #else
 #	error UNDEFINED

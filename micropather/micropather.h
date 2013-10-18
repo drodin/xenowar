@@ -45,6 +45,7 @@ distribution.
 #	define MP_VECTOR std::vector
 #endif
 #include <float.h>
+#include <stdint.h>
 
 #ifdef _DEBUG
 	#ifndef DEBUG
