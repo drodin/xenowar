@@ -9,50 +9,6 @@
 			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
 			<triggers>clean,full,incremental,</triggers>
 			<arguments>
-				<dictionary>
-					<key>?name?</key>
-					<value></value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.append_environment</key>
-					<value>true</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.buildArguments</key>
-					<value></value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.buildCommand</key>
-					<value>make</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/xenowar/Device-Release}</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.contents</key>
-					<value>org.eclipse.cdt.make.core.activeConfigSettings</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.enableAutoBuild</key>
-					<value>false</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.enableCleanBuild</key>
-					<value>true</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.enableFullBuild</key>
-					<value>true</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.stopOnError</key>
-					<value>true</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.useDefaultBuildCmd</key>
-					<value>true</value>
-				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
@@ -74,4 +30,52 @@
 		<nature>com.qnx.tools.ide.bbt.core.bbtnature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>engine</name>
+			<type>2</type>
+			<locationURI>PROJECT_ROOT/engine</locationURI>
+		</link>
+		<link>
+			<name>faces</name>
+			<type>2</type>
+			<locationURI>PROJECT_ROOT/faces</locationURI>
+		</link>
+		<link>
+			<name>game</name>
+			<type>2</type>
+			<locationURI>PROJECT_ROOT/game</locationURI>
+		</link>
+		<link>
+			<name>gamui</name>
+			<type>2</type>
+			<locationURI>PROJECT_ROOT/gamui</locationURI>
+		</link>
+		<link>
+			<name>grinliz</name>
+			<type>2</type>
+			<locationURI>PROJECT_ROOT/grinliz</locationURI>
+		</link>
+		<link>
+			<name>micropather</name>
+			<type>2</type>
+			<locationURI>PROJECT_ROOT/micropather</locationURI>
+		</link>
+		<link>
+			<name>shared</name>
+			<type>2</type>
+			<locationURI>PROJECT_ROOT/shared</locationURI>
+		</link>
+		<link>
+			<name>tinyxml2</name>
+			<type>2</type>
+			<locationURI>PROJECT_ROOT/tinyxml2</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>PROJECT_ROOT</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D</value>
+		</variable>
+	</variableList>
 </projectDescription>

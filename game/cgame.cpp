@@ -32,7 +32,7 @@ extern "C" char androidResourcePath[200];
 #endif
 
 #ifdef __PLAYBOOK__
-#include "../playbook/main.h"
+#include "bb/main.h"
 #endif
 
 #include "../grinliz/glstringutil.h"
