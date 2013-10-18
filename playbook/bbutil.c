@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <assert.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -52,7 +51,7 @@ static EGLContext egl_ctx;
 
 static screen_context_t screen_ctx;
 static screen_window_t screen_win;
-static screen_display_t screen_disp;
+int screen_resolution[2];
 static int nbuffers = 2;
 static int initialized = 0;
 
@@ -126,10 +125,10 @@ bbutil_init_egl(screen_context_t ctx) {
                             EGL_NONE};
 
 #ifdef USING_GL11
-    usage = SCREEN_USAGE_OPENGL_ES1 | SCREEN_USAGE_ROTATION;
+    usage = SCREEN_USAGE_OPENGL_ES1;
     attrib_list[9] = EGL_OPENGL_ES_BIT;
 #elif defined(USING_GL20)
-    usage = SCREEN_USAGE_OPENGL_ES2 | SCREEN_USAGE_ROTATION;
+    usage = SCREEN_USAGE_OPENGL_ES2;
     attrib_list[9] = EGL_OPENGL_ES2_BIT;
     EGLint attributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 #else
@@ -200,70 +199,19 @@ bbutil_init_egl(screen_context_t ctx) {
         return EXIT_FAILURE;
     }
 
-    rc = screen_get_window_property_pv(screen_win, SCREEN_PROPERTY_DISPLAY, (void **)&screen_disp);
+    screen_resolution[0] = atoi(getenv("WIDTH"));
+    screen_resolution[1] = atoi(getenv("HEIGHT"));
+
+    rc = screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_SIZE, screen_resolution);
     if (rc) {
-        perror("screen_get_window_property_pv");
+        perror("screen_set_window_property_iv(SCREEN_PROPERTY_SIZE)");
         bbutil_terminate();
         return EXIT_FAILURE;
     }
 
-    int screen_resolution[2];
-
-    rc = screen_get_display_property_iv(screen_disp, SCREEN_PROPERTY_SIZE, screen_resolution);
+    rc = screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_BUFFER_SIZE, screen_resolution);
     if (rc) {
-        perror("screen_get_display_property_iv");
-        bbutil_terminate();
-        return EXIT_FAILURE;
-    }
-
-    int angle = atoi(getenv("ORIENTATION"));
-
-    screen_display_mode_t screen_mode;
-    rc = screen_get_display_property_pv(screen_disp, SCREEN_PROPERTY_MODE, (void**)&screen_mode);
-    if (rc) {
-        perror("screen_get_display_property_pv");
-        bbutil_terminate();
-        return EXIT_FAILURE;
-    }
-
-    int size[2];
-    rc = screen_get_window_property_iv(screen_win, SCREEN_PROPERTY_BUFFER_SIZE, size);
-    if (rc) {
-        perror("screen_get_window_property_iv");
-        bbutil_terminate();
-        return EXIT_FAILURE;
-    }
-
-    int buffer_size[2] = {size[0], size[1]};
-
-    if ((angle == 0) || (angle == 180)) {
-        if (((screen_mode.width > screen_mode.height) && (size[0] < size[1])) ||
-            ((screen_mode.width < screen_mode.height) && (size[0] > size[1]))) {
-                buffer_size[1] = size[0];
-                buffer_size[0] = size[1];
-        }
-    } else if ((angle == 90) || (angle == 270)){
-        if (((screen_mode.width > screen_mode.height) && (size[0] > size[1])) ||
-            ((screen_mode.width < screen_mode.height && size[0] < size[1]))) {
-                buffer_size[1] = size[0];
-                buffer_size[0] = size[1];
-        }
-    } else {
-         fprintf(stderr, "Navigator returned an unexpected orientation angle.\n");
-         bbutil_terminate();
-         return EXIT_FAILURE;
-    }
-
-    rc = screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_BUFFER_SIZE, buffer_size);
-    if (rc) {
-        perror("screen_set_window_property_iv");
-        bbutil_terminate();
-        return EXIT_FAILURE;
-    }
-
-    rc = screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_ROTATION, &angle);
-    if (rc) {
-        perror("screen_set_window_property_iv");
+        perror("screen_set_window_property_iv(SCREEN_PROPERTY_BUFFER_SIZE)");
         bbutil_terminate();
         return EXIT_FAILURE;
     }
@@ -944,118 +892,12 @@ int bbutil_load_texture(const char* filename, int* width, int* height, float* te
 }
 #endif //USE_TEXTURE
 
-int bbutil_calculate_dpi(screen_context_t ctx) {
-    int rc;
-    int screen_phys_size[2];
-
-    rc = screen_get_display_property_iv(screen_disp, SCREEN_PROPERTY_PHYSICAL_SIZE, screen_phys_size);
-    if (rc) {
-        perror("screen_get_display_property_iv");
-        bbutil_terminate();
-        return EXIT_FAILURE;
-    }
-
-    //Simulator will return 0,0 for physical size of the screen, so use 170 as default dpi
-    if ((screen_phys_size[0] == 0) && (screen_phys_size[1] == 0)) {
-        return 170;
-    } else {
-        int screen_resolution[2];
-        rc = screen_get_display_property_iv(screen_disp, SCREEN_PROPERTY_SIZE, screen_resolution);
-        if (rc) {
-            perror("screen_get_display_property_iv");
-            bbutil_terminate();
-            return EXIT_FAILURE;
-        }
-        double diagonal_pixels = sqrt(screen_resolution[0] * screen_resolution[0] + screen_resolution[1] * screen_resolution[1]);
-        double diagonal_inches = 0.0393700787 * sqrt(screen_phys_size[0] * screen_phys_size[0] + screen_phys_size[1] * screen_phys_size[1]);
-        return (int)(diagonal_pixels / diagonal_inches + 0.5);
-
-    }
+int
+bbutil_get_width() {
+	return screen_resolution[0];
 }
 
-int bbutil_rotate_screen_surface(int angle) {
-    int rc, rotation, skip = 1, temp;;
-    EGLint interval = 1;
-    int size[2];
-
-    if ((angle != 0) && (angle != 90) && (angle != 180) && (angle != 270)) {
-        fprintf(stderr, "Invalid angle\n");
-        return EXIT_FAILURE;
-    }
-
-    rc = screen_get_window_property_iv(screen_win, SCREEN_PROPERTY_ROTATION, &rotation);
-    if (rc) {
-        perror("screen_set_window_property_iv");
-        return EXIT_FAILURE;
-    }
-
-    rc = screen_get_window_property_iv(screen_win, SCREEN_PROPERTY_BUFFER_SIZE, size);
-    if (rc) {
-        perror("screen_set_window_property_iv");
-        return EXIT_FAILURE;
-    }
-
-    switch (angle - rotation) {
-        case -270:
-        case -90:
-        case 90:
-        case 270:
-            temp = size[0];
-            size[0] = size[1];
-            size[1] = temp;
-            skip = 0;
-            break;
-    }
-
-    if (!skip) {
-        rc = eglMakeCurrent(egl_disp, NULL, NULL, NULL);
-        if (rc != EGL_TRUE) {
-            bbutil_egl_perror("eglMakeCurrent");
-            return EXIT_FAILURE;
-        }
-
-        rc = eglDestroySurface(egl_disp, egl_surf);
-        if (rc != EGL_TRUE) {
-            bbutil_egl_perror("eglMakeCurrent");
-            return EXIT_FAILURE;
-        }
-
-        rc = screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_SOURCE_SIZE, size);
-        if (rc) {
-            perror("screen_set_window_property_iv");
-            return EXIT_FAILURE;
-        }
-
-        rc = screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_BUFFER_SIZE, size);
-        if (rc) {
-            perror("screen_set_window_property_iv");
-            return EXIT_FAILURE;
-        }
-        egl_surf = eglCreateWindowSurface(egl_disp, egl_conf, screen_win, NULL);
-        if (egl_surf == EGL_NO_SURFACE) {
-            bbutil_egl_perror("eglCreateWindowSurface");
-            return EXIT_FAILURE;
-        }
-
-        rc = eglMakeCurrent(egl_disp, egl_surf, egl_surf, egl_ctx);
-        if (rc != EGL_TRUE) {
-            bbutil_egl_perror("eglMakeCurrent");
-            return EXIT_FAILURE;
-        }
-
-        rc = eglSwapInterval(egl_disp, interval);
-        if (rc != EGL_TRUE) {
-            bbutil_egl_perror("eglSwapInterval");
-            return EXIT_FAILURE;
-        }
-    }
-
-    rc = screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_ROTATION, &angle);
-    if (rc) {
-        perror("screen_set_window_property_iv");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
+int
+bbutil_get_height() {
+	return screen_resolution[1];
 }
-

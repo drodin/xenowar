@@ -106,24 +106,10 @@ void bbutil_measure_text(font_t* font, const  char* msg, float* width, float* he
 int bbutil_load_texture(const char* filename, int* width, int* height, float* tex_x, float* tex_y, unsigned int* tex);
 
 /**
- * Returns dpi for a given screen
-
- *
- * @param ctx path libscreen context that corresponds to display of interest
- * @return dpi for a given screen
+ * Get resolution
  */
-
-int bbutil_calculate_dpi(screen_context_t ctx);
-
-/**
- * Rotates the screen to a given angle
-
- *
- * @param angle to rotate screen surface to, must by 0, 90, 180, or 270
- * @return EXIT_SUCCESS if texture loading succeeded otherwise EXIT_FAILURE
- */
-
-int bbutil_rotate_screen_surface(int angle);
+int bbutil_get_width();
+int bbutil_get_height();
 
 #ifdef __cplusplus
 }

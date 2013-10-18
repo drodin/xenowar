@@ -4,16 +4,13 @@
  *  Created on: Oct 26, 2011
  *      Author: User
  */
-//#include <curses.h>
 #include <assert.h>
-#include <screen/screen.h>
-#include <bps/accelerometer.h>
+#include <math.h>
 #include <bps/navigator.h>
 #include <bps/screen.h>
 #include <bps/bps.h>
 #include <bps/event.h>
 #include <bps/dialog.h>
-#include <bps/virtualkeyboard.h>
 
 #include "input/screen_helpers.h"
 #include "gestures/set.h"
@@ -47,7 +44,6 @@ static screen_context_t screen_cxt;
 //Query g_primaryGLX and g_primaryGLY of the window surface created by utility code
 EGLint g_primaryGLX, g_primaryGLY;
 
-bool g_bUsingAccelerometer = false;
 bool g_bMousePressed = false;
 
 int initialize()
@@ -66,24 +62,11 @@ int initialize()
 
 void ProcessEvents()
 {
-	    while (true)
+    bps_event_t* event = NULL;
+    int rc = bps_get_event(&event, 0);
+
+	    if (event)
 	    {
-	        bps_event_t* event = NULL;
-	        int rc = bps_get_event(&event, 0);
-
-	        assert(BPS_SUCCESS == rc);
-	        if (rc != BPS_SUCCESS)
-	        {
-	         fprintf(stderr, "HUH?!");
-	            break;
-	        }
-
-	        if (event == NULL)
-	        {
-	            // No more events in the queue
-	            break;
-	        }
-
 	        int domain = bps_event_get_domain(event);
 	        int code = bps_event_get_code(event);
 
@@ -140,7 +123,7 @@ void ProcessEvents()
 	            case NAVIGATOR_WINDOW_INACTIVE:
 	               // m_isPaused = true;
 	               // m_handler->onPause();
-		           fprintf(stderr, "Window unactive");
+		           fprintf(stderr, "Window inactive");
 		           OnEnterBackground();
 		           break;
 
@@ -173,22 +156,22 @@ void ProcessEvents()
 								switch (screen_val) {
 								case SCREEN_EVENT_MTOUCH_TOUCH:
 									if (!g_bMousePressed)
-										SendGUIEx(MESSAGE_TYPE_GUI_CLICK_START, mtouch_event.x, mtouch_event.y, 0);
+										SendGUIEx(MESSAGE_TYPE_GUI_CLICK_START, mtouch_event.x, bbutil_get_height()-mtouch_event.y, 0);
 									g_bMousePressed = true;
 									break;
 								case SCREEN_EVENT_MTOUCH_MOVE:
 									if (g_bMousePressed)
-										SendGUIEx(MESSAGE_TYPE_GUI_CLICK_MOVE, mtouch_event.x, mtouch_event.y, 0);
+										SendGUIEx(MESSAGE_TYPE_GUI_CLICK_MOVE, mtouch_event.x, bbutil_get_height()-mtouch_event.y, 0);
 									break;
 								case SCREEN_EVENT_MTOUCH_RELEASE:
 									if (g_bMousePressed)
-										SendGUIEx(MESSAGE_TYPE_GUI_CLICK_END, mtouch_event.x, mtouch_event.y, 0);
+										SendGUIEx(MESSAGE_TYPE_GUI_CLICK_END, mtouch_event.x, bbutil_get_height()-mtouch_event.y, 0);
 									g_bMousePressed = false;
 									break;
 								}
 	        	        	} else { //more then one finger
 								if (g_bMousePressed)
-									SendGUIEx(MESSAGE_TYPE_GUI_CLICK_CANCEL, mtouch_event.x, mtouch_event.y, 0);
+									SendGUIEx(MESSAGE_TYPE_GUI_CLICK_CANCEL, mtouch_event.x, bbutil_get_height()-mtouch_event.y, 0);
 								g_bMousePressed = false;
 	        	        	}
 	        	        }
@@ -216,9 +199,9 @@ void ProcessEvents()
 	        	    	static int lastButtonState = 0;
 
 	        	    	if (lastButtonState != buttonState)
-							SendGUIEx((buttonState)?MESSAGE_TYPE_GUI_CLICK_START:MESSAGE_TYPE_GUI_CLICK_END, coords[0], coords[1], 0);
+							SendGUIEx((buttonState)?MESSAGE_TYPE_GUI_CLICK_START:MESSAGE_TYPE_GUI_CLICK_END, coords[0], bbutil_get_height()-coords[1], 0);
 	        	    	else if (buttonState)
-							SendGUIEx(MESSAGE_TYPE_GUI_CLICK_MOVE, coords[0], coords[1], 0);
+							SendGUIEx(MESSAGE_TYPE_GUI_CLICK_MOVE, coords[0], bbutil_get_height()-coords[1], 0);
 
 	        	    	lastButtonState = buttonState;
 	        	    }
@@ -247,48 +230,16 @@ void ProcessEvents()
 	          					}
 	          	            }
 
-	        } else if (dialog_get_domain() == domain)
-	        {
-
-	        	/*
-
-	        	 /if (DIALOG_RESPONSE == code)
-	            {
-	             //   ASSERT(m_promptInProgress);
-	              //  m_promptInProgress = false;
-	                //m_handler->onPromptOk(dialog_event_get_prompt_input_field(event));
-	            	fprintf(stderr, "Got dialog response %d", code);
-	            }
-	            */
 	        } else {
 	           fprintf(stderr, "Unrecognized and unrequested event! domain: %d, code: %d", domain, code);
 	        }
 
-	       // bps_event_destroy(event);  //Conflicting docs about needing this.. but it will crash, so no, I guess not
 	    }
 
 }
 
 void SetFpsLimit(int fps) {
 	fpsTimerLoopMS = (int) (1000.0f/fps);
-}
-
-void SetAccelerometerUpdate(int enable) {
-	if (!accelerometer_is_supported())
-	{
-		fprintf(stderr, "Ignoring acceleremeter command, device doesn't have one");
-	} else
-	{
-		if (enable != 0)
-		{
-			g_bUsingAccelerometer = true;
-			//turn it on at 40hz.  The API wants enums, not custom settings (?), so I guess I'll just do this.
-			accelerometer_set_update_frequency(FREQ_40_HZ);
-		} else
-		{
-			g_bUsingAccelerometer = false;
-		}
-	}
 }
 
 void gesture_callback(gesture_base_t* gesture, mtouch_event_t* event, void* param, int async)
@@ -410,9 +361,7 @@ int main(int argc, char *argv[])
 
 	//get proton going
 
-	//SetAccelerometerUpdate(1);
-
-	if (!Init())
+	if (!Init(bbutil_get_width(), bbutil_get_height()))
 	{
 		fprintf(stderr, "Proton failed to init");
 		return 0;
@@ -445,16 +394,6 @@ int main(int argc, char *argv[])
 
 	    if (!IsInBackground())
 	    {
-			if (g_bUsingAccelerometer)
-			{
-				//poll, and send messages
-				double x,y,z;
-				if (accelerometer_read_forces(&x, &y, &z) == BPS_SUCCESS)
-				{
-					SendGUIVec(MESSAGE_TYPE_GUI_ACCELEROMETER, x, y, z);
-				}
-			}
-
 			Update();
 			Draw();
 			bbutil_swap();

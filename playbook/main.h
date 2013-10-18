@@ -52,7 +52,7 @@ enum eMessageType
 
 };
 
-bool Init();
+bool Init(int width, int height);
 void Kill();
 void Update();
 void Draw();

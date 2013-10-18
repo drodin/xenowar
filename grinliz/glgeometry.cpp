@@ -1448,7 +1448,7 @@ int grinliz::IntersectRayAABB(	const Vector2F& origin, const Vector2F& dir,
 	int i;
 	int whichPlane;
 	float maxT[2];
-	float candidatePlane[2];
+	float candidatePlane[2] = {0.0, 0.0};
 
 	const float *pOrigin = &origin.x;
 	const float *pBoxMin = &aabb.min.x;

@@ -1745,7 +1745,7 @@ Map::QuadTree::QuadTree()
 void Map::QuadTree::Clear()
 {
 	memset( tree, 0, sizeof(MapItem*)*NUM_QUAD_NODES );
-	memset( depthUse, 0, sizeof(int)*(QUAD_DEPTH+1) );
+	memset( depthUse, 0, sizeof(int)*QUAD_DEPTH );
 }
 
 
