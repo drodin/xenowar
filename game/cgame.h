@@ -105,9 +105,8 @@ void GameAddDatabase( const char* path );
 int GamePopSound( void* handle, int* databaseID, int* offset, int* size );	// returns 1 if a sound was available
 
 // --- Core to platform --- //
-void PlatformPathToResource( char* buffer, int bufferLen, int* offset, int* length );
+void PlatformPathToResource( char* buffer, int bufferLen );
 const char* PlatformName();
-//void PlayWAVSound( int offset, int nBytes );
 
 // ----------------------------------------------------------------
 // Debugging and adjustment

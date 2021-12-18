@@ -84,7 +84,7 @@ bool SoundManager::PopSound( int* _databaseID, int* _offset, int* _size )
 		if ( size && !compressed ) {
 			nSounds--;
 			*_databaseID = database->DatabaseID();
-			*_offset = offset + database->OffsetFromStart();
+			*_offset = offset;
 			*_size = size;
 			return true;
 		}

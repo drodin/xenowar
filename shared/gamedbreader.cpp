@@ -179,33 +179,30 @@ Reader::~Reader()
 	if ( access )
 		free( access );
 	if ( fp ) {
-		fclose( fp );
+		SDL_RWclose( fp );
 	}
 }
 
 
-bool Reader::Init( int id, const char* filename, int _offset )
+bool Reader::Init( int id, const char* filename )
 {
 	databaseID = id;
-	fp = fopen( filename, "rb" );
+	fp = SDL_RWFromFile( filename, "rb" );
 	if ( !fp )
 		return false;
 
-	offset = _offset;
-	fseek( fp, 0, SEEK_END );
-	int dbSize = (int)ftell( fp ) - (int)offset;
-	fseek( fp, offset, SEEK_SET );
+	Sint64 dbSize = SDL_RWsize(fp);
 
 	// Read in the data structers. Leave the "data" compressed and in the file.
 	HeaderStruct header;
-	int size = fread( &header, sizeof(header), 1, fp );
+	size_t size = SDL_RWread( fp, &header, sizeof(header), 1);
 	if ( size != 1 ) {
 		GLOUTPUT(( "CORRUPT DATABASE\n" ));
-		fclose( fp );
+		SDL_RWclose( fp );
 		return false;
 	}
 
-	fseek( fp, offset, SEEK_SET );
+	SDL_RWseek( fp, 0, RW_SEEK_SET );
 	memSize = header.offsetToData;
 
 	// FIXME: Should add a checksum...
@@ -214,15 +211,15 @@ bool Reader::Init( int id, const char* filename, int _offset )
 		 || memSize > dbSize ) 
 	{
 		GLOUTPUT(( "CORRUPT DATABASE\n" ));
-		fclose( fp );
+		SDL_RWclose( fp );
 		return false;
 	}
 
 	mem = malloc( memSize );
 	endMem = (const char*)mem + memSize;
 
-	GLOUTPUT(( "Reading '%s' from offset=%d\n", filename, offset ));
-	fread( mem, memSize, 1, fp );
+	GLOUTPUT(( "Reading '%s'\n", filename ));
+	SDL_RWread( fp, mem, memSize, 1 );
 
 	root = (const Item*)( (U8*)mem + header.offsetToItems );
 
@@ -337,12 +334,12 @@ void Reader::GetData( int dataID, void* target, int memSize ) const
 	GLASSERT( dataID >= 0 && dataID < (int)header->nData );
 	const DataDescStruct& dataDesc = dataDescPtr[dataID];
 	
-	fseek( fp, offset+dataDesc.offset, SEEK_SET );
+	SDL_RWseek( fp, dataDesc.offset, RW_SEEK_SET );
 
 	if ( dataDesc.compressedSize == dataDesc.size ) {
 		// no compression.
 		GLASSERT( dataDesc.size == (U32)memSize );
-		fread( target, memSize, 1, fp );
+		SDL_RWread( fp, target, memSize, 1 );
 	}
 	else {
 		if ( bufferSize < (int)dataDesc.compressedSize ) {
@@ -354,7 +351,7 @@ void Reader::GetData( int dataID, void* target, int memSize ) const
 			else 
 				buffer = malloc( bufferSize );
 		}
-		fread( buffer, dataDesc.compressedSize, 1, fp );
+		SDL_RWread( fp, buffer, dataDesc.compressedSize, 1 );
 
 #ifdef DEBUG
 		int result =

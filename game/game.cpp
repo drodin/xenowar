@@ -173,11 +173,9 @@ void Game::Init()
 
 	// Load the database.
 	char buffer[260];
-	int offset;
-	int length;
-	PlatformPathToResource( buffer, 260, &offset, &length );
+	PlatformPathToResource( buffer, 260 );
 	database0 = new gamedb::Reader();
-	database0->Init( 0, buffer, offset );
+	database0->Init( 0, buffer );
 	database1 = 0;
 
 	GLOUTPUT(( "Game::Init Database initialized.\n" ));
@@ -755,7 +753,7 @@ void Game::LoadModDatabase( const char* name, bool preload )
 	if ( name && *name ) {
 		database1 = new gamedb::Reader();
 
-		if  ( !database1->Init( 1, name, 0 ) ) {
+		if  ( !database1->Init( 1, name ) ) {
 			delete database1;
 			database1 = 0;
 		}

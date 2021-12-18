@@ -25,6 +25,7 @@
 #define GRINLIZ_GAME_DB_READER_INCLUDED
 
 #include <stdio.h>
+#include "SDL.h"
 #include "../grinliz/gltypes.h"
 #include "../grinliz/gldebug.h"
 #include "gamedb.h"
@@ -137,7 +138,7 @@ public:
 		@return true if filename could be opened and read.
 				false if error.
 	*/
-	bool Init( int databaseID, const char* filename, int offset=0 );
+	bool Init( int databaseID, const char* filename );
 	int DatabaseID() const { return databaseID; }
 
 	/// Access the root of the database.
@@ -162,7 +163,6 @@ public:
 	const void* AccessData( const Item* item, const char* name, int* size=0 ) const;
 
 	const void* BaseMem() const					{ return mem; }
-	int OffsetFromStart() const					{ return offset; }	///< Offset from the start of the file (passed in)
 
 	const char* GetString( int id ) const;
 	int GetStringID( const char* str ) const;
@@ -175,13 +175,12 @@ private:
 	Reader* next;
 	const Reader* mod;	// when chaining, 'this' is the base, 'mod' overrides
 
-	FILE* fp;
+	SDL_RWops* fp;
 	int databaseID;
 
 	void* mem;
 	const void* endMem;
 	int memSize;
-	int offset;	// offset to read from file start
 
 	mutable void* buffer;
 	mutable int bufferSize;

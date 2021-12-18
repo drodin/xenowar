@@ -17,19 +17,11 @@
 #include "cgame.h"
 #include "game.h"
 
-#if defined( UFO_WIN32_SDL )
-static const char* winResourcePath = "./res/uforesource.db";
-#endif
-
-#ifdef UFO_IPHONE
+#ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#ifdef ANDROID_NDK
-extern "C" int androidResourceOffset;
-extern "C" int androidResourceLen;
-extern "C" char androidResourcePath[200];
-#endif
+#define resourceFile "uforesource.db"
 
 #include "../grinliz/glstringutil.h"
 
@@ -190,31 +182,14 @@ void GameHotKey( void* handle, int mask )
 
 
 
-void PlatformPathToResource( char* buffer, int bufferLen, int* offset, int* length )
+void PlatformPathToResource( char* buffer, int bufferLen )
 {
-#if defined( UFO_IPHONE )
-	CFStringRef nameRef = CFStringCreateWithCString( 0, name, kCFStringEncodingWindowsLatin1 );
-	CFStringRef extensionRef = CFStringCreateWithCString( 0, extension, kCFStringEncodingWindowsLatin1 );
-	
-	CFBundleRef mainBundle = CFBundleGetMainBundle();	
-	CFURLRef imageURL = CFBundleCopyResourceURL( mainBundle, nameRef, extensionRef, NULL );
-	if ( !imageURL ) {
-		GLOUTPUT(( "Error loading '%s' '%s'\n", name, extension ));
-	}
-	GLASSERT( imageURL );
-		
-	CFURLGetFileSystemRepresentation( imageURL, true, (unsigned char*)buffer, bufferLen );
-#elif defined( UFO_WIN32_SDL )
-	grinliz::StrNCpy( buffer, winResourcePath, bufferLen );
-	*offset = 0;
-	*length = 0;
-#elif defined (ANDROID_NDK)
-	grinliz::StrNCpy( buffer, androidResourcePath, bufferLen );
-	*offset = androidResourceOffset;
-	*length = androidResourceLen;
-#else
-#	error UNDEFINED
-#endif
+	grinliz::GLString resourcePath = "";
+    char* basePath = SDL_GetBasePath();
+    if (basePath)
+    	resourcePath.append(basePath);
+    resourcePath.append(resourceFile);
+    grinliz::StrNCpy( buffer, resourcePath.c_str(), bufferLen );
 }
 
 
@@ -223,12 +198,10 @@ const char* PlatformName()
 	if ( TVMode() ) {
 		return "tv";
 	}
-#if defined( UFO_WIN32_SDL )
-	return "pc";
-#elif defined (ANDROID_NDK)
+#if defined( __MOBILE__ )
 	return "android";
 #else
-#	error UNDEFINED
+    return "pc";
 #endif
 }
 
@@ -254,25 +227,6 @@ int GamePopSound( void* handle, int* database, int* offset, int* size )
 	bool result = game->PopSound( database, offset, size );	
 	return (result) ? 1 : 0;
 }
-
-
-/*
-void PlayWAVSound( int offset, int nBytes )
-{
-	//GLOUTPUT(( "Wav sound called.\n" ));
-#if defined( UFO_WIN32_SDL )
-	extern void Audio_PlayWav( const char* path, int offset, int size );
-
-	Audio_PlayWav( winResourcePath, offset, nBytes );
-
-#elif defined (ANDROID_NDK)
-	// do nothing for now.
-#else
-#	error UNDEFINED
-#endif
-}
-*/
-
 
 void GameJoyButton( void* handle, int id, bool down )
 {

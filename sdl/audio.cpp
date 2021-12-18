@@ -1,5 +1,5 @@
 #include "audio.h"
-#include "SDL.h "
+#include "SDL.h"
 #include <stdlib.h>
 #include "../grinliz/gldebug.h"
 
@@ -20,6 +20,7 @@ struct Sample {
 
 void MixAudio(void *unused, Uint8 *stream, int len)
 {
+    SDL_memset(stream, 0, len);
     for ( int i=0; i<NUM_SOUNDS; ++i ) {
         int amount = (sounds[i].len-sounds[i].pos);
         if ( amount > len ) {

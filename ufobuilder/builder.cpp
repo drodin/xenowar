@@ -1213,7 +1213,7 @@ int main( int argc, char* argv[] )
 
 	if ( printDatabase ) {
 		gamedb::Reader reader;
-		reader.Init( 0, outputPath.c_str(), 0 );
+		reader.Init( 0, outputPath.c_str() );
 		reader.RecWalk( reader.Root(), 0 );
 	}
 

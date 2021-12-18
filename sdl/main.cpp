@@ -15,10 +15,9 @@
 
 #pragma warning ( disable : 4530 )		// Don't warn about unused exceptions.
 
-#include "GL/glew.h"
-#include "SDL.h "
+#include "SDL.h"
 
-#include "../grinliz/gldebug.h"
+#include "../engine/platformgl.h"
 #include "../grinliz/gltypes.h"
 #include "../grinliz/glutil.h"
 #include "../grinliz/glvector.h"
@@ -31,17 +30,23 @@
 // Used for map maker mode - directly call the game object.
 #include "../game/game.h"
 
+#if defined (_WIN32)
+#define WINDOWS_LEAN_AND_MEAN
+#include <windows.h>
+
 #include "GL/wglew.h"
 
 // For error logging.
-#define WINDOWS_LEAN_AND_MEAN
 #include <winhttp.h>
+#include <string>
+#endif
+
+#define RESOURCE_PATH_LENGTH 260
+static char resourcePath[RESOURCE_PATH_LENGTH];
 
 //#define TEST_ROTATION
-//#define TEST_FULLSPEED
 //#define SEND_CRASH_LOGS
 #define SIM_GAMEPAD
-#define TIME_BETWEEN_FRAMES	30
 
 #define IPOD_SCREEN_WIDTH	320
 #define IPOD_SCREEN_HEIGHT	480
@@ -156,23 +161,12 @@ void TransformXY( int x0, int y0, int* x1, int* y1 )
 }
 
 
-Uint32 TimerCallback(Uint32 interval, void *param)
-{
-	SDL_Event user;
-	memset( &user, 0, sizeof(user ) );
-	user.type = SDL_USEREVENT;
-
-	SDL_PushEvent( &user );
-	return interval;
-}
-
-
 int main( int argc, char **argv )
 {    
 	MemStartCheck();
 	{ char* test = new char[16]; delete [] test; }
 
-	SDL_Surface *surface = 0;
+	SDL_Window *surface = 0;
 
 	// SDL initialization steps.
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK ) < 0 )
@@ -180,11 +174,17 @@ int main( int argc, char **argv )
 	    fprintf( stderr, "SDL initialization failed: %s\n", SDL_GetError( ) );
 		exit( 1 );
 	}
-	SDL_EnableKeyRepeat( 0, 0 );
-	SDL_EnableUNICODE( 1 );
 
-	const SDL_version* sversion = SDL_Linked_Version();
-	GLOUTPUT(( "SDL: major %d minor %d patch %d\n", sversion->major, sversion->minor, sversion->patch ));
+	SDL_version sversion; SDL_GetVersion(&sversion);
+	GLOUTPUT(( "SDL: major %d minor %d patch %d\n", sversion.major, sversion.minor, sversion.patch ));
+
+	PlatformPathToResource( resourcePath, RESOURCE_PATH_LENGTH );
+
+#if __MOBILE__
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+#endif
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8);
@@ -197,13 +197,16 @@ int main( int argc, char **argv )
 		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, multisample );
 	}
 
-	int	videoFlags  = SDL_OPENGL;          /* Enable OpenGL in SDL */
-		videoFlags |= SDL_GL_DOUBLEBUFFER; /* Enable double buffering */
+	Uint32	videoFlags  = SDL_WINDOW_OPENGL;     /* Enable OpenGL in SDL */
 
+#ifdef __MOBILE__
+    videoFlags |= SDL_WINDOW_FULLSCREEN;
+#else
 	if ( fullscreen )
-		videoFlags |= SDL_FULLSCREEN;
+		videoFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	else
-		videoFlags |= SDL_RESIZABLE;
+		videoFlags |= SDL_WINDOW_RESIZABLE;
+#endif
 
 #ifdef TEST_ROTATION
 	screenWidth  = SCREEN_WIDTH;
@@ -222,15 +225,22 @@ int main( int argc, char **argv )
 
 	// Note that our output surface is rotated from the iPod.
 	//surface = SDL_SetVideoMode( IPOD_SCREEN_HEIGHT, IPOD_SCREEN_WIDTH, 32, videoFlags );
-	surface = SDL_SetVideoMode( screenWidth, screenHeight, 32, videoFlags );
+#ifdef __MOBILE__
+    surface = SDL_CreateWindow("", 0, 0, 0, 0, videoFlags);
+    SDL_GetWindowSize(surface,  &screenWidth, &screenHeight);
+#else
+	surface = SDL_CreateWindow("", 0, 0, screenWidth, screenHeight, videoFlags);
+#endif
 	GLASSERT( surface );
+
+	SDL_GL_CreateContext(surface);
 
 	int stencil = 0;
 	int depth = 0;
 	SDL_GL_GetAttribute( SDL_GL_STENCIL_SIZE, &stencil );
 	glGetIntegerv( GL_DEPTH_BITS, &depth );
-	GLOUTPUT(( "SDL surface created. w=%d h=%d bpp=%d stencil=%d depthBits=%d\n", 
-				surface->w, surface->h, surface->format->BitsPerPixel, stencil, depth ));
+	//GLOUTPUT(( "SDL surface created. w=%d h=%d bpp=%d stencil=%d depthBits=%d\n", 
+	//			surface->w, surface->h, surface->format->BitsPerPixel, stencil, depth ));
 
     /* Verify there is a surface */
     if ( !surface ) {
@@ -244,15 +254,10 @@ int main( int argc, char **argv )
 		GLOUTPUT(( "Joystick '%s' open.\n", SDL_JoystickName(0) ));
 	}
 
+#if !defined(__MOBILE__)
 	int r = glewInit();
 	GLASSERT( r == GL_NO_ERROR );
-
-	// Calling this seems to confuse my ATI driver and cause lag / event back up?
-//#ifdef TEST_FULLSPEED	
-//	wglSwapIntervalEXT( 0 );	// vsync
-//#else
-//	wglSwapIntervalEXT( 1 );	// vsync
-//#endif
+#endif
 
 	const unsigned char* vendor   = glGetString( GL_VENDOR );
 	const unsigned char* renderer = glGetString( GL_RENDERER );
@@ -277,6 +282,7 @@ int main( int argc, char **argv )
 	void* game = 0;
 	bool mapMakerMode = false;
 
+#if defined (_WIN32)
 	WIN32_FIND_DATA findFileData;
 	HANDLE h;
 	h = FindFirstFile( ".\\mods\\*.xwdb", &findFileData );
@@ -291,6 +297,7 @@ int main( int argc, char **argv )
 		}
 		FindClose( h );
 	}
+#endif
 
 	if ( argc > 3 ) {
 		// -- MapMaker -- //
@@ -326,7 +333,8 @@ int main( int argc, char **argv )
 		mapMakerMode = true;
 	}
 	else {
-		game = NewGame( screenWidth, screenHeight, rotation, ".\\", tvMode );
+		char* savePath = SDL_GetPrefPath("Xenowar", "savegame");
+        game = NewGame( screenWidth, screenHeight, rotation, savePath, tvMode );
 	}
 
 
@@ -355,44 +363,24 @@ int main( int argc, char **argv )
 #endif
 
 
-#ifndef TEST_FULLSPEED
-	SDL_TimerID timerID = SDL_AddTimer( TIME_BETWEEN_FRAMES, TimerCallback, 0 );
-#endif
-
 	bool L2Down = false;
 	bool R2Down = false;
 	grinliz::Vector2F joystickAxis[2] = { 0, 0 };
 
 	// ---- Main Loop --- //
-#ifdef TEST_FULLSPEED	
 	while ( !done ) {
 		if ( SDL_PollEvent( &event ) )
-#else
-	while ( !done && SDL_WaitEvent( &event ) )
-#endif
 	{
-		// The user event shouldn't be duplicated...if there are 2, pull out the dupe.
-		if ( event.type == SDL_USEREVENT ) {
-			SDL_Event e;
-			while( true ) {
-				int n = SDL_PeepEvents( &e, 1, SDL_PEEKEVENT, SDL_ALLEVENTS );		
-				if ( n == 1 && e.type == SDL_USEREVENT ) {
-					SDL_PeepEvents( &e, 1, SDL_GETEVENT, SDL_ALLEVENTS );
-				}
-				else {
-					break;
-				}
-			}
-		}
-
 		switch( event.type )
 		{
-			case SDL_VIDEORESIZE:
-				screenWidth = event.resize.w;
-				screenHeight = event.resize.h;
-				surface = SDL_SetVideoMode( screenWidth, screenHeight, 32, videoFlags );
+			case SDL_WINDOWEVENT:
+            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+				screenWidth = event.window.data1;
+				screenHeight = event.window.data2;
+                SDL_SetWindowSize( surface, screenWidth, screenHeight );
 				GameDeviceLoss( game );
-				GameResize( game, event.resize.w, event.resize.h, rotation );
+				GameResize( game, event.window.data1, event.window.data2, rotation );
+            }
 				break;
 
 			/*
@@ -473,7 +461,11 @@ int main( int argc, char **argv )
 
 			case SDL_KEYDOWN:
 			{
-				SDLMod sdlMod = SDL_GetModState();
+				SDL_Keymod sdlMod = SDL_GetModState();
+
+                if ( event.key.repeat != 0)
+                    break;
+
 
 				if ( mapMakerMode && event.key.keysym.sym >= SDLK_0 && event.key.keysym.sym <= SDLK_9 ) {
 					int index = 0;
@@ -585,7 +577,7 @@ int main( int argc, char **argv )
 							((Game*)game)->SuppressText( true );
 						}
 						GameDoTick( game, SDL_GetTicks() );
-						SDL_GL_SwapBuffers();
+						SDL_GL_SwapWindow(surface);
 						if ( mapMakerMode ) {
 							((Game*)game)->SuppressText( false );
 						}
@@ -608,33 +600,33 @@ int main( int argc, char **argv )
 							((Game*)game)->DeleteAtSelection(); 
 						break;
 
-					case SDLK_KP9:			
+					case SDLK_KP_9:			
 						if ( mapMakerMode )
 							((Game*)game)->RotateSelection( -1 );			
 						break;
 
 					case SDLK_r:
-					case SDLK_KP7:			
+					case SDLK_KP_7:			
 						if ( mapMakerMode )
 							((Game*)game)->RotateSelection( 1 );			
 						break;
 
-					case SDLK_KP8:			
+					case SDLK_KP_8:			
 						if ( mapMakerMode )
 							((Game*)game)->DeltaCurrentMapItem(16);			
 						break;
 
-					case SDLK_KP5:			
+					case SDLK_KP_5:			
 						if ( mapMakerMode )
 							((Game*)game)->DeltaCurrentMapItem(-16);		
 						break;
 
-					case SDLK_KP6:			
+					case SDLK_KP_6:			
 						if ( mapMakerMode )
 							((Game*)game)->DeltaCurrentMapItem(1); 			
 						break;
 
-					case SDLK_KP4:			
+					case SDLK_KP_4:			
 						if ( mapMakerMode )
 							((Game*)game)->DeltaCurrentMapItem(-1);			
 						break;
@@ -746,42 +738,28 @@ int main( int argc, char **argv )
 			}
 			break;
 
-			case SDL_USEREVENT:
-			{
-				glEnable( GL_DEPTH_TEST );
-				glDepthFunc( GL_LEQUAL );
-
-				for( int stick=0; stick<2; ++stick ) {
-					if ( joystickAxis[stick].x || joystickAxis[stick].y ) {
-						GameJoyStick( game, stick, joystickAxis[stick].x, joystickAxis[stick].y );
-					}
-				}
-				GameDoTick( game, SDL_GetTicks() );
-				SDL_GL_SwapBuffers();
-
-				int databaseID=0, size=0, offset=0;
-				// FIXME: account for databaseID when looking up sound.
-				while ( GamePopSound( game, &databaseID, &offset, &size ) ) {
-					Audio_PlayWav( "./res/uforesource.db", offset, size );
-				}
-			};
-
 			default:
 				break;
 		}
-#ifdef TEST_FULLSPEED	
 		}
 
 		glEnable( GL_DEPTH_TEST );
 		glDepthFunc( GL_LEQUAL );
 
+        for( int stick=0; stick<2; ++stick ) {
+            if ( joystickAxis[stick].x || joystickAxis[stick].y ) {
+                GameJoyStick( game, stick, joystickAxis[stick].x, joystickAxis[stick].y );
+            }
+        }
 		GameDoTick( game, SDL_GetTicks() );
-		SDL_GL_SwapBuffers();
+        SDL_GL_SwapWindow(surface);
+
+        int databaseID=0, size=0, offset=0;
+        // FIXME: account for databaseID when looking up sound.
+        while ( GamePopSound( game, &databaseID, &offset, &size ) ) {
+            Audio_PlayWav( resourcePath, offset, size );
+        }
 	}
-#else
-	}
-	SDL_RemoveTimer( timerID );
-#endif
 
 	if ( mapMakerMode ) {
 		const Surface* lightmap = ((Game*)game)->engine->GetMap()->GetLightMap();
@@ -893,6 +871,7 @@ void SaveLightMap( const Surface* core )
 
 void PostCurrentGame()
 {
+#if defined (_WIN32)
 	GLOUTPUT(( "Posting current game.\n" ));
 
     BOOL  bResults = FALSE;
@@ -970,5 +949,5 @@ void PostCurrentGame()
     if (hRequest) WinHttpCloseHandle(hRequest);
     if (hConnect) WinHttpCloseHandle(hConnect);
     if (hSession) WinHttpCloseHandle(hSession);
-
+#endif
 }

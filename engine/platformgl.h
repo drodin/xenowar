@@ -18,16 +18,14 @@
 
 #include "../grinliz/gldebug.h"
 
-#if defined(UFO_IPHONE)
-	// Really iPhone, not apple...
-	#import <OpenGLES/ES1/gl.h>
-	#import <OpenGLES/ES1/glext.h>
-
-	#define glFrustumfX		glFrustumf
-	#define glOrthofX		glOrthof
-	#define USING_ES
-#elif defined (ANDROID_NDK)
+#if defined (__MOBILE__)
+#if defined (__APPLE__)
+	#include <OpenGLES/ES1/gl.h>
+	#include <OpenGLES/ES1/glext.h>
+#else
 	#include <GLES/gl.h>
+#endif
+
 	#define glFrustumfX		glFrustumf
 	#define glOrthofX		glOrthof
 	#define USING_ES
@@ -39,7 +37,7 @@
 	#define glBindBufferX	glBindBuffer
 	#define glBufferSubDataX	glBufferSubData
 	#define glDeleteBuffersX	glDeleteBuffers
-#elif defined( UFO_WIN32_SDL )
+#else
 	#include "GL/glew.h"
 
 	#define glFrustumfX		glFrustum
@@ -51,8 +49,6 @@
 	#define glBufferSubDataX	glBufferSubDataARB
 	#define glBindBufferX	glBindBufferARB
 	#define glDeleteBuffersX	glDeleteBuffersARB
-#else
-	#error Undefined platform
 #endif
 
 
