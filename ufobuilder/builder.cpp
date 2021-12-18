@@ -1119,7 +1119,7 @@ int main( int argc, char* argv[] )
 	printf( "Opening, path: '%s' filename: '%s'\n", inputDirectory.c_str(), inputFullPath.c_str() );
 	
 	// Test:
-	{
+	/*{
 		string testInput = inputDirectory + "Lenna.png";
 		SDL_Surface* surface = libIMG_Load( testInput.c_str() );
 		if ( surface ) {
@@ -1155,7 +1155,7 @@ int main( int argc, char* argv[] )
 			
 			SDL_FreeSurface( surface );
 		}
-	}
+	}*/
 
 	XMLDocument xmlDoc( true, COLLAPSE_WHITESPACE );
 	xmlDoc.LoadFile( inputFullPath.c_str() );

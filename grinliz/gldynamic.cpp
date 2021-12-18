@@ -58,9 +58,11 @@ void* grinliz::grinlizLoadLibrary( const char* name )
 	#elif defined(__APPLE__)
 		libraryName = name;
 		handle = dlopen ( libraryName.c_str(), RTLD_LAZY);
-		if (!handle) {
-			GLLOG(( "ERROR: could not load %s.\n", libraryName.c_str() ));
-		}
+		GLRELASSERT( handle );
+
+		//if (!handle) {
+		//	GLLOG(( "ERROR: could not load %s.\n", libraryName.c_str() ));
+		//}
 	#endif
 	return handle;
 }

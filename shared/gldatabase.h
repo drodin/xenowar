@@ -27,7 +27,7 @@ distribution.
 #ifndef SHARED_DATABASE_INCLUDED
 #define SHARED_DATABASE_INCLUDED
 
-#include "../sqlite3/sqlite3.h"
+#include <sqlite3.h>
 #include <vector>
 
 class BinaryDBWriter
