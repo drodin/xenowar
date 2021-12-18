@@ -26,6 +26,7 @@ distribution.
 #define GRINLIZ_BITARRAY_INCLUDED
 
 
+#include <string.h>
 #include "gltypes.h"
 #include "glrectangle.h"
 

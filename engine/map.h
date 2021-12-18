@@ -515,7 +515,7 @@ private:
 	U32 visibilityQueryID;
 
 	micropather::MicroPather* microPather;
-	micropather::MPVector<void*> mpVector;
+	MP_VECTOR<void*> mpVector;
 
 	// 0x80 fire bit		(128)
 	// 0x40 flare bit		(64)

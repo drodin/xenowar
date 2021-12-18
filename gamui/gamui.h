@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include <memory.h>
 #include <string.h>
+#include <stdlib.h>
 
 #if defined( _DEBUG ) || defined( DEBUG )
 #	if defined( _MSC_VER )

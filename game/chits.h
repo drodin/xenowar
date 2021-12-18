@@ -72,8 +72,8 @@ public:
 	}
 
 	static T LengthSquared( const grinliz::Vector2<T>& a, const grinliz::Vector2<T>& b ) {
-		T x0 = Min( a.x, b.x );
-		T x1 = Max( a.x, b.x );
+		T x0 = grinliz::Min( a.x, b.x );
+		T x1 = grinliz::Max( a.x, b.x );
 
 		T dx = x1 - x0;
 		// but wait, dx can't be greater than 1/2 the size (it is a cylinder)

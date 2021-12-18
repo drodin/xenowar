@@ -20,6 +20,7 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
 
 // --- Platform to Core --- //
 void* NewGame( int width, int height, int rotation, const char* savePath, bool tvMode );
