@@ -1,6 +1,6 @@
 #include "../grinliz/gldebug.h"
 #include "gldatabase.h"
-#include "../zlib/zlib.h"
+#include <zlib.h>
 
 #include <memory.h>
 

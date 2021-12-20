@@ -23,7 +23,7 @@
 
 #include "gamedbwriter.h"
 #include "../grinliz/glstringutil.h"
-#include "../zlib/zlib.h"
+#include <zlib.h>
 #include "gamedb.h"
 
 #include <algorithm>

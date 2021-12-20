@@ -25,11 +25,7 @@
 #include <string.h>
 
 #include "gamedbreader.h"
-#ifdef ANDROID_NDK
-#	include <zlib.h>		// Built in zlib support.
-#else
-#	include "../zlib/zlib.h"
-#endif
+#include <zlib.h>
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4996 )
