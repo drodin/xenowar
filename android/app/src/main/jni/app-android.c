@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "../../../game/cgame.h"
+#include "../../../../../game/cgame.h"
 
 int   gAppAlive   = 1;
 
@@ -106,7 +106,7 @@ void
 Java_com_grinninglizard_UFOAttack_UFORenderer_nativeResize( JNIEnv*  env, jobject  thiz, jint w, jint h )
 {
 	if ( game == 0 ) {
-		game = NewGame( w, h, 0, androidSavePath );
+		game = NewGame( w, h, 0, androidSavePath, false );
 	}
 	else {
 		//GameDeviceLoss( game );
