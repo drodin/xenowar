@@ -15,7 +15,7 @@
 
 #pragma warning ( disable : 4530 )		// Don't warn about unused exceptions.
 
-#include "glew.h"
+#include "GL/glew.h"
 #include "SDL.h "
 
 #include "../grinliz/gldebug.h"
@@ -31,7 +31,7 @@
 // Used for map maker mode - directly call the game object.
 #include "../game/game.h"
 
-#include "wglew.h"
+#include "GL/wglew.h"
 
 // For error logging.
 #define WINDOWS_LEAN_AND_MEAN
