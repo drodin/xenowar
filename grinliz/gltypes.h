@@ -26,11 +26,13 @@ distribution.
 #define GRINLIZ_TYPES_INCLUDED
 
 #include <stdint.h>
+#include <typeinfo>
 
 typedef uint8_t			U8;
 typedef int8_t		    S8;
 typedef uint16_t		U16;
-typedef int16_t			S16;
+//typedef int16_t			S16;
+typedef std::conditional<sizeof(intptr_t)/2 <= sizeof(int16_t), int16_t, int32_t>::type S16;
 typedef uint32_t		U32;
 typedef int32_t			S32;
 typedef uint64_t	 	U64;

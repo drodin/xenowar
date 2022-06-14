@@ -467,7 +467,7 @@ private:
 					 const grinliz::Vector2<S16>& delta );
 
 	void StateToVec( const void* state, grinliz::Vector2<S16>* vec ) const	{ *vec = *((grinliz::Vector2<S16>*)&state); }
-	void* VecToState( const grinliz::Vector2<S16>& vec ) const				{ return (void*)(*(int*)&vec); }
+	void* VecToState( const grinliz::Vector2<S16>& vec ) const				{ return (void*)(*(intptr_t*)&vec); }
 
 	void ClearVisPathMap( grinliz::Rectangle2I& bounds );
 	void CalcVisPathMap( grinliz::Rectangle2I& bounds );

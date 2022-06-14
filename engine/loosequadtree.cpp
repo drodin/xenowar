@@ -438,7 +438,7 @@ void SpaceTree::QueryPlanesRec(	const Plane* planes, int nPlanes, int intersecti
 				 && ( (_excludedFlags & flags) == 0 ) )
 			{	
 				if ( debug ) {
-					GLOUTPUT(( "%*s[%d] Testing: 0x%x %s", node->depth, " ", node->depth, (int)m, m->GetResource()->header.name.c_str() ));
+					GLOUTPUT(( "%*s[%d] Testing: 0x%lx %s", node->depth, " ", node->depth, (intptr_t)m, m->GetResource()->header.name.c_str() ));
 				}
 				if ( intersection == grinliz::INTERSECT ) {
 					const Rectangle3F& aabb = m->AABB();

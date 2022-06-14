@@ -2114,13 +2114,13 @@ int BattleScene::ProcessActionHit( Action* action )
 						action->unit->CreditKill();
 					}
 				}
-				GLOUTPUT(( "Hit Unit 0x%x hp=%d/%d\n", (unsigned)hitUnit, (int)hitUnit->HP(), (int)hitUnit->GetStats().TotalHP() ));
+				GLOUTPUT(( "Hit Unit 0x%lx hp=%d/%d\n", (intptr_t)hitUnit, (int)hitUnit->HP(), (int)hitUnit->GetStats().TotalHP() ));
 			}
 		}
 		else if ( hitWeapon ) {
 			Inventory* inv = hitWeapon->GetInventory();
 			inv->RemoveItem( Inventory::WEAPON_SLOT );
-			GLOUTPUT(( "Shot the weapon out of Unit 0x%x hand.\n", (unsigned)hitWeapon ));
+			GLOUTPUT(( "Shot the weapon out of Unit 0x%lx hand.\n", (intptr_t)hitWeapon ));
 		}
 		else if ( m && m->IsFlagSet( Model::MODEL_OWNED_BY_MAP ) ) {
 			Rectangle2I bounds;
@@ -2362,8 +2362,8 @@ bool BattleScene::HandleIconTap( const gamui::UIItem* tapped )
 			
 		if ( okay ) { 
 			// shooting creates a turn action then a shoot action.
-			GLRELASSERT( selection.soldierUnit >= 0 );
-			GLRELASSERT( selection.targetUnit >= 0 );
+			GLRELASSERT( (intptr_t)selection.soldierUnit >= 0 );
+			GLRELASSERT( (intptr_t)selection.targetUnit >= 0 );
 			//SoundManager::Instance()->QueueSound( "blip" );
 
 			//Item* weapon = selection.soldierUnit->GetWeapon();

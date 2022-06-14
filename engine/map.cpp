@@ -1531,7 +1531,7 @@ void Map::PrintStateInfo( void* state )
 int Map::SolvePath( const void* user, const Vector2<S16>& start, const Vector2<S16>& end, float *cost, MP_VECTOR< Vector2<S16> >* path )
 {
 	GRINLIZ_PERFTRACK
-	GLRELASSERT( sizeof( int ) == sizeof( void* ));			// fix this for 64 bit
+	//GLRELASSERT( sizeof( int ) == sizeof( void* ));			// fix this for 64 bit
 	GLRELASSERT( sizeof(Vector2<S16>) == sizeof( void* ) );
 	GLRELASSERT( pathBlocker );
 	if ( pathBlocker ) {
@@ -1989,7 +1989,7 @@ void Map::BeginRenderState( const void* renderState )
 {
 	const float ALPHA = 0.5f;
 	const float ALPHA_1 = 0.30f;
-	switch( (int)renderState ) {
+	switch( (intptr_t)renderState ) {
 		case UIRenderer::RENDERSTATE_UI_NORMAL_OPAQUE:
 		case RENDERSTATE_MAP_OPAQUE:
 			gamuiShader.SetColor( 1, 1, 1, 1 );

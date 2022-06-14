@@ -37,7 +37,7 @@ void UIRenderer::EndRender()
 
 void UIRenderer::BeginRenderState( const void* renderState )
 {
-	switch ( (int)renderState )
+	switch ( (intptr_t)renderState )
 	{
 	case RENDERSTATE_UI_NORMAL:
 		shader.SetColor( 1, 1, 1, 1 );

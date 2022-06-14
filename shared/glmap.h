@@ -37,7 +37,7 @@ public:
 
 private:
 	unsigned Hash( const char* p ) const {
-		return stringKey ? HashStr(p) : (unsigned)(p);
+		return stringKey ? HashStr(p) : (unsigned)uintptr_t(p);
 	}
 	bool Equal( const char* s0, const char* s1 ) const {
 		return stringKey ? CStrEqual( s0, s1 ) : (s0==s1);

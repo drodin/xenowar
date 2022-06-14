@@ -266,7 +266,7 @@ void Unit::Init(	int team,
 	this->body = body & 0x7fffffff;	// strip off the high bit. Makes serialization odd to deal with negative numbers.
 	GLASSERT( type >= 0 && type < Unit::NUM_ALIEN_TYPES );
 	
-	random.SetSeed( body ^ ((U32)this) );
+	random.SetSeed( body ^ ((U32)uintptr_t(this)) );
 	random.Rand();
 	random.Rand();
 
@@ -570,7 +570,7 @@ void Unit::Load( const XMLElement* ele, const ItemDefArr& itemDefArr )
 	// Hard to get good randomness here (gender bit keeps being
 	// consistent.) A combination of the element address and 'this'
 	// seems to work pretty well.
-	random.SetSeed( body ^ ((U32)ele) ^ ((U32)this) );
+	random.SetSeed( body ^ ((U32)uintptr_t(ele)) ^ ((U32)uintptr_t(this)) );
 	random.Rand();
 	random.Rand();
 

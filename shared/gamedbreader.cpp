@@ -353,11 +353,13 @@ void Reader::GetData( int dataID, void* target, int memSize ) const
 		}
 		SDL_RWread( fp, buffer, dataDesc.compressedSize, 1 );
 
+		uLongf destLen = *(&dataDesc.size);
+
 #ifdef DEBUG
 		int result =
 #endif
 		uncompress(	(Bytef*)target, 
-					(uLongf*)&dataDesc.size, 
+					&destLen, 
 					(const Bytef*)buffer,
 					dataDesc.compressedSize );
 		GLASSERT( result == Z_OK );

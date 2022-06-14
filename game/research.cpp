@@ -228,7 +228,7 @@ void Research::Save( XMLPrinter* printer )
 {
 	printer->OpenElement( "Research" );
 	if ( current )
-		printer->PushAttribute( "current", current-taskArr );
+		printer->PushAttribute( "current", (int) (current-taskArr) );
 
 	for( int i=0; i<nTasks; ++i ) {
 		printer->OpenElement( "Task" );
