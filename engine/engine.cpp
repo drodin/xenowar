@@ -399,8 +399,8 @@ void Engine::Draw()
 
 			shadowShader.PopMatrix( GPUShader::MODELVIEW_MATRIX );
 			shadowShader.PopTextureMatrix( 3 );
-		}
 #endif
+		}
 		{
 			LightGroundPlane( map->DayTime() ? DAY_TIME : NIGHT_TIME, OPEN_LIGHT, 0, &color );
 
