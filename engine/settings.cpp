@@ -14,7 +14,7 @@
 */
 
 #include "settings.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "../engine/serialize.h"
 
 using namespace grinliz;

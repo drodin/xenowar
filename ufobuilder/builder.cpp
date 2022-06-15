@@ -34,7 +34,7 @@
 #include "../grinliz/gldynamic.h"
 #include "../grinliz/glutil.h"
 #include "../grinliz/glstringutil.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 
 #include "modelbuilder.h"
 #include "../engine/serialize.h"
@@ -319,7 +319,7 @@ void ProcessTreeRec( gamedb::WItem* parent, XMLElement* ele )
 	for( const XMLAttribute* attrib=ele->FirstAttribute(); attrib; attrib=attrib->Next() ) {		
 		int i;
 
-		if ( XML_NO_ERROR == attrib->QueryIntValue( &i ) ) {
+		if ( XML_SUCCESS == attrib->QueryIntValue( &i ) ) {
 			witem->SetInt( attrib->Name(), i );
 		}
 		else {

@@ -22,7 +22,7 @@
 #include "../gamui/gamui.h"
 #include "../engine/uirendering.h"
 #include "gamelimits.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 
 #include <stdio.h>
 

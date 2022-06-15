@@ -39,7 +39,7 @@
 #include "../grinliz/glstringutil.h"
 #include "../grinliz/glgeometry.h"
 
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "battlescenedata.h"
 
 using namespace grinliz;

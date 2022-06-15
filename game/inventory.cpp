@@ -15,7 +15,7 @@
 
 #include "inventory.h"
 #include "game.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "../grinliz/glstringutil.h"
 
 using namespace grinliz;

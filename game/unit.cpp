@@ -17,7 +17,7 @@
 #include "game.h"
 #include "../engine/engine.h"
 #include "material.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "../grinliz/glstringutil.h"
 #include "ai.h"
 #include "ufosound.h"

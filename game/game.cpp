@@ -46,7 +46,7 @@
 #include "../grinliz/glutil.h"
 #include "../grinliz/glperformance.h"
 #include "../grinliz/glstringutil.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "../version.h"
 
 #include "ufosound.h"

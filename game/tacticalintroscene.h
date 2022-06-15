@@ -19,7 +19,7 @@
 #include "scene.h"
 #include "unit.h"
 #include "gamelimits.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "../shared/gamedbreader.h"
 #include "../gamui/gamui.h"
 #include "../engine/uirendering.h"

@@ -23,7 +23,7 @@
 #include "../grinliz/glvector.h"
 #include "../grinliz/glbitarray.h"
 #include "../engine/enginelimits.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 
 #include "stats.h"
 #include "inventory.h"

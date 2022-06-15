@@ -26,7 +26,7 @@
 #include "../grinliz/glgeometry.h"
 
 #include "../micropather/micropather.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 
 #include "../shared/glmap.h"
 

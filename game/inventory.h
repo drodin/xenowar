@@ -17,7 +17,7 @@
 #define UFOATTACK_INVENTORY_INCLUDED
 
 #include "item.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 
 class ItemDef;
 class Engine;

@@ -25,7 +25,7 @@
 #include "../engine/uirendering.h"
 #include "../grinliz/glperformance.h"
 #include "../engine/ufoutil.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "../shared/gamedbreader.h"
 #include "../gamui/gamui.h"
 #include "../faces/faces.h"

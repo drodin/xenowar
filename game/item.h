@@ -26,7 +26,7 @@
 #include "gamelimits.h"
 #include "stats.h"
 #include "../grinliz/glstringutil.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 
 class ModelResource;
 class TiXmlElement;

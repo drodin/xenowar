@@ -17,7 +17,7 @@
 #include "../grinliz/glutil.h"
 #include "../grinliz/glrandom.h"
 #include "gamelimits.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "unit.h"
 #include "../grinliz//glgeometry.h"
 #include "../engine/serialize.h"

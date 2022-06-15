@@ -19,7 +19,7 @@
 #include "../grinliz/gldebug.h"
 #include "../grinliz/gltypes.h"
 #include "../grinliz/glvector.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #include "gamelimits.h"
 
 #include <stdio.h>

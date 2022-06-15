@@ -21,7 +21,7 @@
 #include "../grinliz/glstringutil.h"
 #include "../shared/glmap.h"
 #include "../shared/gamedbreader.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 
 class ItemDefArr;
 class ItemDef;

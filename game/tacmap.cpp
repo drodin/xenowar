@@ -19,7 +19,7 @@
 
 #include "../engine/loosequadtree.h"
 #include "../grinliz/glrectangle.h"
-#include "../tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 
 using namespace grinliz;
 using namespace tinyxml2;
