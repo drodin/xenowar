@@ -894,9 +894,15 @@ void ProcessTexture( XMLElement* texture )
 			else {
 				pixelBuffer16.resize( surface->w*surface->h );
 				pixelBuffer16.reserve( surface->w*surface->h );
-				OrderedDitherTo16( surface, RGBA16, true, &pixelBuffer16[0] );
+				if (surface->format->Amask)
+					OrderedDitherTo16( surface, RGBA16, true, &pixelBuffer16[0] );
+				else
+					OrderedDitherTo16( surface, RGB16, true, &pixelBuffer16[0] );
 			}
-			InsertTextureToDB( assetName.c_str(), "RGBA16", isImage, false, surface->w, surface->h, &pixelBuffer16[0], pixelBuffer16.size()*2, nomip );
+			if (surface->format->Amask)
+				InsertTextureToDB( assetName.c_str(), "RGBA16", isImage, false, surface->w, surface->h, &pixelBuffer16[0], pixelBuffer16.size()*2, nomip );
+			else
+				InsertTextureToDB( assetName.c_str(), "RGB16", isImage, false, surface->w, surface->h, &pixelBuffer16[0], pixelBuffer16.size()*2, nomip );
 			break;
 
 		case 24:
