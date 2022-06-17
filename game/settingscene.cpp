@@ -10,8 +10,8 @@ using namespace grinliz;
 
 SettingScene::SettingScene( Game* _game ) : Scene( _game )
 {
-	//Engine* engine = GetEngine();
-	//const Screenport& port = engine->GetScreenport();
+	Engine* engine = GetEngine();
+	const Screenport& port = engine->GetScreenport();
 	GameSettingsManager* sm = GameSettingsManager::Instance();
 
 	background.Init( &gamui2D, game->GetRenderAtom( Game::ATOM_TACTICAL_BACKGROUND ), false );
@@ -29,7 +29,10 @@ SettingScene::SettingScene( Game* _game ) : Scene( _game )
 	const float SIZE = gamui2D.GetTextHeight()*2.8f;
 	float y = GAME_GUTTER_X() / 4;
 	float deltaY = SIZE + 2.0f;
-	float boxWidth = GAME_BUTTON_SIZE()*5.0f;
+	float boxWidth = GAME_BUTTON_SIZE_B()*4.0f;
+
+	if ( TVMode() )
+		boxWidth -= GAME_GUTTER_X()*3.0f/2.0f;
 
 	modText.Init( &gamui2D );
 	modText.SetSize( boxWidth, SIZE );
@@ -146,66 +149,48 @@ void SettingScene::Resize()
 
 	gamui::LayoutCalculator layout( port.UIWidth(), port.UIHeight() );
 	layout.SetSize( GAME_BUTTON_SIZE_B(), GAME_BUTTON_SIZE_B() );
-	layout.SetSpacing( GAME_BUTTON_SPACING()*0.25f );
+	layout.SetSpacing( (port.UIHeight() - GAME_BUTTON_SIZE_B() * 6.0f) / 5.0f  );
 	if ( TVMode() ) {
 		layout.SetGutter( GAME_GUTTER_X(), GAME_GUTTER_Y() );
-		layout.SetSpacing( GAME_BUTTON_SPACING() );
+		layout.SetSpacing( (port.UIHeight() - GAME_GUTTER_Y()*2.0f - GAME_BUTTON_SIZE_B() * 6.0f) / 5.0f );
 	}
 
 	layout.PosAbs( &doneButton, 0, -1 );
 
-	static const int COL = 5;
+	static const int COL = 4;
 	int y = 0;
 
-	layout.PosAbs( &modText, 0, y );
+	layout.PosAbs( &modText, 0, y, false );
 	layout.PosAbs( &modDown, COL, y );
 	layout.PosAbs( &modCurrent, COL+1, y );
 	layout.PosAbs( &modUp, COL+3, y );
 
-	modText.SetVisible( !TVMode() );
-	modDown.SetVisible( !TVMode() );
-	modCurrent.SetVisible( !TVMode() );
-	modUp.SetVisible( !TVMode() );
+	++y;
 
-	if ( !TVMode() ) 
-		++y;
-
-	layout.PosAbs( &moveText, 0, y );
-
-	moveText.SetVisible( !TVMode() );
+	layout.PosAbs( &moveText, 0, y, false );
 	for( int i=0; i<2; ++i ) {
 		layout.PosAbs( &moveButton[i], COL+i, y );
-		moveButton[i].SetVisible( !TVMode() );
 	}
+	++y;
 
-	if ( !TVMode() ) 
-		++y;
-
-	layout.PosAbs( &dotText, 0, y );
+	layout.PosAbs( &dotText, 0, y, false );
 	for( int i=0; i<2; ++i ) {
 		layout.PosAbs( &dotButton[i], COL+i, y, true );
 	}
 	++y;
 
-	layout.PosAbs( &debugText, 0, y );
-	debugText.SetVisible( !TVMode() );
+	layout.PosAbs( &debugText, 0, y, false );
 	for( int i=0; i<4; ++i ) {
 		layout.PosAbs( &debugButton[i], COL+i, y, true );
-		debugButton[i].SetVisible( !TVMode() );
 	}
+	++y;
 
-	if ( !TVMode() ) 
-		++y;
-
-	dragText.SetVisible( !TVMode() );
-	layout.PosAbs( &dragText, 0, y );
+	layout.PosAbs( &dragText, 0, y, false );
 	for( int i=0; i<2; ++i ) {
 		layout.PosAbs( &dragButton[i], COL+i, y, true );
-		dragButton[i].SetVisible( !TVMode() );
 	}
+	++y;
 
-	if ( !TVMode() ) 
-		++y;
 	layout.PosAbs( &audioButton, COL, y, true );
 }
 

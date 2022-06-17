@@ -14,7 +14,7 @@ NewTacticalOptions::NewTacticalOptions( Game* _game ) : Scene( _game )
 		{ "4", "6", "8", "Low", "Med", "Hi", 
 		"Low", "Med", "Hi", "Day", "Night",
 		"Fa-S", "T-S", "Fo-S", "D-S", "Fa-D", "T-D", "Fo-D", "D-D",
-		"City", "BattleShip",	"AlienBase", "TerranBase",
+		"City", "Battle\nShip",	"Alien\nBase", "Terran\nBase",
 		"Crash" };
 	static const int toggleSize[TOGGLE_COUNT] = {
 		1, 1, 1, 1, 1, 1,
@@ -111,10 +111,10 @@ void NewTacticalOptions::Resize()
 	}
 
 	// Right group
-	static const int RIGHT=-6; //4;
+	static const int RIGHT=-5; //4;
 	layout.PosAbs( &scenarioLabel, RIGHT, 0 );
 
-	layout.SetTextOffset( 10.f, 15.f );
+	layout.SetTextOffset( 1.f, 15.f );
 	for( int i=0; i<3; ++i ) {
 		layout.PosAbs( &rowLabel[i], RIGHT+4, i+1 );
 	}	

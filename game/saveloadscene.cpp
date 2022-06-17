@@ -89,7 +89,7 @@ void SaveLoadScene::Resize()
 
 	layout.PosAbs( &backButton, 0, -1 );
 	layout.PosAbs( &okayButton, -1, -1 );
-	layout.PosAbs( &confirmText, -5, -1 );
+	layout.PosAbs( &confirmText, -5, 4 );
 
 	layout.PosAbs( &saveButton, 0, 0 );
 	layout.PosAbs( &loadButton, 0, 1 );

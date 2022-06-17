@@ -279,7 +279,7 @@ GeoScene::GeoScene( Game* _game, const GeoSceneData* data ) : Scene( _game ), re
 	RenderAtom cashAtom = Game::CalcIconAtom( ICON_GREEN_STAND_MARK, true );
 	RenderAtom nullAtom;
 	cashImage.Init( &gamui2D, cashAtom, cashAtom, cashAtom, cashAtom, nullAtom, nullAtom );
-	cashImage.SetSize( GAME_BUTTON_SIZE_F()*1.7f, GAME_BUTTON_SIZE_F() );
+	cashImage.SetSize( GAME_BUTTON_SIZE_F()*1.7f, GAME_BUTTON_SIZE_F()*0.3f );
 
 	for( int i=0; i<MAX_CONTEXT; ++i ) {
 		context[i].Init( &gamui2D, game->GetButtonLook( Game::BLUE_BUTTON ) );
@@ -314,6 +314,7 @@ void GeoScene::Resize()
 {
 	const Screenport& port = GetEngine()->GetScreenport();
 
+	/*
 	if ( TVMode() ) {
 		LayoutCalculator layout( port.UIWidth(), port.UIHeight() );
 		layout.SetGutter( GAME_GUTTER_X(), GAME_GUTTER_Y() );
@@ -327,12 +328,13 @@ void GeoScene::Resize()
 		layout.PosAbs( &cashImage, -1, -1 );
 	}
 	else {
+	*/
 		helpButton.SetPos( port.UIWidth()-GAME_BUTTON_SIZE_F(), 0 );
 		researchButton.SetPos( 0, 0 );
 		baseButton.SetPos( 0, port.UIHeight()-GAME_BUTTON_SIZE_F() );
 		cashImage.SetPos( port.UIWidth()-GAME_BUTTON_SIZE_F()*1.8f, 
 						  port.UIHeight()-GAME_BUTTON_SIZE_F()*0.4f );
-	}
+	/*}
 
 	if ( TVMode() ) {
 		float h = 4.5f / tanf( ToRadian( EL_FOV*0.5f ) );
@@ -361,13 +363,16 @@ void GeoScene::Resize()
 		mask1.SetPos( ui.x, 0 );
 	}
 	else {
+	*/
 		GetEngine()->CameraIso( false, false, (float)GeoMap::MAP_X, (float)GeoMap::MAP_Y );
 		if ( savedCameraX >= 0 ) {
 			Vector3F cameraPos = GetEngine()->camera.PosWC();
 			cameraPos.x = savedCameraX;
 			GetEngine()->camera.SetPosWC( cameraPos );
 		}
-	}
+		mask0.SetVisible( false );
+		mask1.SetVisible( false );
+	//}
 	SetMapLocation();
 }
 
@@ -788,6 +793,7 @@ void GeoScene::SetMapLocation()
 	float d = cameraPos.y * tanf( ToRadian( EL_FOV*0.5f ) );
 	float leftEdge = cameraPos.x - d;
 
+	/*
 	if ( !TVMode() ) {
 		if ( leftEdge < 0 ) {
 			GetEngine()->camera.DeltaPosWC( GeoMap::MAP_X, 0, 0 );
@@ -796,6 +802,7 @@ void GeoScene::SetMapLocation()
 			GetEngine()->camera.DeltaPosWC( -GeoMap::MAP_X, 0, 0 );
 		}
 	}
+	*/
 	static const Vector2F pos[GEO_REGIONS] = {	// "North", "South", "Europe", "Asia", "Africa", "Under"
 		{ 64.f/1000.f, 9.f/500.f },
 		{ 97.f/1000.f, 455.f/500.f },

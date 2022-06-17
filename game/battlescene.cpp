@@ -289,6 +289,9 @@ void BattleScene::Resize()
 							&targetButton, 
 							&controlButton[0] };
 
+	imageL1.SetVisible( TVMode() );
+	imageR1.SetVisible( TVMode() );
+
 	if ( TVMode() ) {		
 		LayoutCalculator layout( port.UIWidth(), port.UIHeight() );
 		layout.SetSize( GAME_ICON_SIZE(), GAME_ICON_SIZE() );
@@ -303,8 +306,6 @@ void BattleScene::Resize()
 		layout.PosAbs( &invButton,   -1, -1 );
 		imageL1.SetPos( invButton.X() - imageL1.Width(),   invButton.Y() );	// do NOT set size
 		imageR1.SetPos( invButton.X() + invButton.Width(), invButton.Y() );	// do NOT set size
-		imageL1.SetVisible( TVMode() );
-		imageR1.SetVisible( TVMode() );
 
 		layout.PosAbs( &alienTarget, -1, 0 );
 		imageL2.SetPos( alienTarget.X() - imageR2.Width(), alienTarget.Y() );	// do NOT set size

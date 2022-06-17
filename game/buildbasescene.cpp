@@ -53,7 +53,7 @@ BuildBaseScene::BuildBaseScene( Game* _game, BuildBaseSceneData* data ) : Scene(
 	}
 
 	cashImage.Init( &gamui2D, Game::CalcIconAtom( ICON_GREEN_STAND_MARK ), false );
-	cashImage.SetSize( GAME_BUTTON_SIZE_F()*2.0f, GAME_BUTTON_SIZE_F() );
+	cashImage.SetSize( GAME_BUTTON_SIZE_F()*1.7f, GAME_BUTTON_SIZE_F()*0.3f );
 	cashImage.SetSlice( true );
 
 	cashLabel.Init( &gamui2D );
@@ -85,8 +85,8 @@ void BuildBaseScene::Resize()
 		progressLabel[i].SetCenterPos( buyButton[i].X() + buyButton[i].Width()/2,
 									   buyButton[i].Y() + gamui2D.GetTextHeight() );
 	}
-	cashImage.SetPos( port.UIWidth()-GAME_BUTTON_SIZE_F()*2.0f, port.UIHeight()-GAME_BUTTON_SIZE_F()*0.5f );
-	cashLabel.SetPos( cashImage.X()+10.0f, cashImage.Y()+10.0f );
+	cashImage.SetPos( port.UIWidth()-GAME_BUTTON_SIZE_F()*1.8f, port.UIHeight()-GAME_BUTTON_SIZE_F()*0.4f );
+	cashLabel.SetPos( cashImage.X()+35.0f, cashImage.Y() );
 }
 
 

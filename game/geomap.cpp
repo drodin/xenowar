@@ -88,9 +88,11 @@ void GeoMap::DoTick( U32 currentTime, U32 deltaTime )
 			geoModel[i]->SetFlag( Model::MODEL_OWNED_BY_MAP );
 		}
 		geoModel[1]->SetPos( MAP_X, 0, 0 );
+		/*
 		if ( TVMode() )
 			geoModel[1]->SetFlag( Model::MODEL_INVISIBLE );
 		else
+		*/
 			geoModel[1]->ClearFlag( Model::MODEL_INVISIBLE );
 	}
 

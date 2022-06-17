@@ -31,6 +31,8 @@
 
 #include "../version.h"
 
+#define MIN(a,b) (((a)<(b))?(a):(b))
+
 using namespace grinliz;
 using namespace gamui;
 using namespace tinyxml2;
@@ -107,16 +109,18 @@ TacticalIntroScene::TacticalIntroScene( Game* _game ) : Scene( _game )
 	// Is there a current game?
 	continueButton.SetEnabled( game->HasSaveFile( SAVEPATH_GEO, 0 ) || game->HasSaveFile( SAVEPATH_TACTICAL, 0 ) );
 
-	RenderAtom decoAtom = Game::CalcDecoAtom( DECO_CORE, true );
-	decoAtom.renderState = (const void*)UIRenderer::RENDERSTATE_UI_FOCUS;
-	gamui2D.SetFocusLook( decoAtom, 0 );
-	gamui2D.AddToFocusGroup( &continueButton, 0 );
-	gamui2D.AddToFocusGroup( &loadButton, 0 );
-	gamui2D.AddToFocusGroup( &newTactical, 0 );
-	gamui2D.AddToFocusGroup( &newGeo, 0 );
-	gamui2D.AddToFocusGroup( &newGame, 0 );
-	gamui2D.AddToFocusGroup( &helpButton, 0 );
-	gamui2D.SetFocus( &continueButton );
+	if ( TVMode() ) {
+		RenderAtom decoAtom = Game::CalcDecoAtom(DECO_CORE, true);
+		decoAtom.renderState = (const void *) UIRenderer::RENDERSTATE_UI_FOCUS;
+		gamui2D.SetFocusLook(decoAtom, 0);
+		gamui2D.AddToFocusGroup(&continueButton, 0);
+		gamui2D.AddToFocusGroup(&loadButton, 0);
+		gamui2D.AddToFocusGroup(&newTactical, 0);
+		gamui2D.AddToFocusGroup(&newGeo, 0);
+		gamui2D.AddToFocusGroup(&newGame, 0);
+		gamui2D.AddToFocusGroup(&helpButton, 0);
+		gamui2D.SetFocus(&continueButton);
+	}
 }
 
 
@@ -135,33 +139,30 @@ void TacticalIntroScene::Resize()
 	layout.SetSpacing( GAME_BUTTON_SPACING() );
 
 	// Double wide buttons
-	layout.SetSize( GAME_BUTTON_SIZE_B()*2.0f, GAME_BUTTON_SIZE_B() );
+	float wideButtonSize = 2.0f;
+	if ( !TVMode() )
+		wideButtonSize = MIN( wideButtonSize, (port.UIWidth() - GAME_GUTTER_X()*2.0f - GAME_BUTTON_SPACING()*3.0f) / 4.0f / GAME_BUTTON_SIZE_B() );
+	layout.SetSize( wideButtonSize * GAME_BUTTON_SIZE_B(), GAME_BUTTON_SIZE_B() );
 	int x = 0;
 
 	layout.PosAbs( &continueButton, x++, -1, true );	
 
-	if ( TVMode() ) {
-		layout.PosAbs( &loadButton, x++, -1, true );
-	}
-	else {
-		layout.PosAbs( &loadButton, x++, -1, true );
-	}
+	layout.PosAbs( &loadButton, x++, -1, true );
 	
 	layout.PosAbs( &newGame,		x, -1, true );
 	layout.PosAbs( &newGeo,			x++, -1, true );
 	layout.PosAbs( &newTactical,	x++, -1, true );
-	newGameWarning.SetPos( newGeo.X()-15, newGeo.Y() + newGeo.Height()+2 );
+	newGameWarning.SetPos( newGeo.X(), newGeo.Y() + newGeo.Height()+2 );
 
 	// Square buttons
 	layout.SetSize( GAME_BUTTON_SIZE_B(), GAME_BUTTON_SIZE_B() );
 	if ( TVMode() ) {
-		x = -2;
-		audioButton.SetVisible( false );
+		x = -3;
 		layout.PosAbs( &helpButton,		x++, -1 );
-		settingButton.SetVisible( false );
+		layout.PosAbs( &audioButton,	x++, -1 );
+		layout.PosAbs( &settingButton,	x++, -1 );
 	}
 	else {
-		audioButton.SetVisible( true );
 		layout.PosAbs( &helpButton,		-1, 0 );
 		layout.PosAbs( &audioButton,	-1, 1 );
 		layout.PosAbs( &settingButton,  -1, 2 );

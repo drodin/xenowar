@@ -16,14 +16,7 @@ DialogScene::DialogScene( Game* _game, const DialogSceneData* _data ) : Scene( _
 	//const float INV = 1.f/255.f;
 	//uiRenderer.SetTextColor( 248.f*INV, 228.f*INV, 8.f*INV );
 
-	RenderAtom roundRectangle = Game::CalcPaletteAtom(	Game::PALETTE_GREEN, 
-														Game::PALETTE_GREEN, 
-														Game::PALETTE_DARK, 
-														true );
-
-	background.Init( &gamui2D, roundRectangle, false );
-	background.SetSlice( true );
-	background.SetPos( 0, 0 );
+	background.Init( &gamui2D, game->GetRenderAtom( Game::ATOM_TACTICAL_BACKGROUND ), false );
 	background.SetSize( port.UIWidth(), port.UIHeight() );
 
 	textBox.Init( &gamui2D );

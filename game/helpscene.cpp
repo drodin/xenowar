@@ -122,12 +122,6 @@ void HelpScene::Resize()
 		imageWidth = width;
 	}
 
-	if ( TVMode() ) {
-		buttons[PREV_BUTTON].SetVisible( false );
-		buttons[NEXT_BUTTON].SetVisible( false );
-		buttons[DONE_BUTTON].SetVisible( false );
-	}
-
 	LayoutCalculator layout( port.UIWidth(), port.UIHeight() );
 	layout.SetGutter( GAME_GUTTER_X(), GAME_GUTTER_Y() );
 	layout.SetSpacing( GAME_BUTTON_SPACING() );
@@ -139,8 +133,8 @@ void HelpScene::Resize()
 	layout.PosAbs( &buttons[PREV_BUTTON], -2, -1 );
 	layout.PosAbs( &buttons[NEXT_BUTTON], -1, -1 );
 	layout.PosAbs( &buttons[DONE_BUTTON],  0, -1 );
-	layout.PosAbs( &buttons[SETTINGS_BUTTON],  -1, 0 );
-	layout.PosAbs( &buttons[SAVE_LOAD_BUTTON], -1, 1 );
+	layout.PosAbs( &buttons[SETTINGS_BUTTON],  0, 0 );
+	layout.PosAbs( &buttons[SAVE_LOAD_BUTTON], 0, 1 );
 
 	layout.PosInner( &textBox, 0 );
 	textBox.SetText( text ? text : "" );
