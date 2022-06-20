@@ -230,6 +230,8 @@ void RegionData::Load( const XMLElement* doc )
 
 GeoScene::GeoScene( Game* _game, const GeoSceneData* data ) : Scene( _game ), research( _game->GetDatabase(), _game->GetItemDefArr(), RESEARCH_SECONDS )
 {
+	dragStart.Set( -1, -1 );
+	dragLast.Set( -1, -1 );
 	missileTimer[0] = 0;
 	missileTimer[1] = 0;
 	contextChitID = 0;
@@ -597,6 +599,8 @@ void GeoScene::Tap(	int action,
 				mapTap.Set( -1, -1, -1 );
 			}
 		}
+		dragLast.Set( -1, -1 );
+		dragStart.Set( -1, -1 );
 	}
 	else if ( action == GAME_TAP_CANCEL || action == GAME_TAP_CANCEL_PANNING ) {
 		gamui2D.TapUp( ui.x, ui.y );
