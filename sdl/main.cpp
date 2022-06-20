@@ -76,14 +76,12 @@ static const int SCREEN_HEIGHT = 640;
 // Flipped. Will have to test on actual device.
 static const int SCREEN_WIDTH  = TV_SCREEN_HEIGHT;
 static const int SCREEN_HEIGHT = TV_SCREEN_WIDTH;
-#define TV_MODE
 #endif
 #if 0
 // OUYA on laptop
 // Flipped. Will have to test on actual device.
 static const int SCREEN_WIDTH  = TV_SCREEN_HEIGHT * 3 / 4;
 static const int SCREEN_HEIGHT = TV_SCREEN_WIDTH * 3 / 4;
-#define TV_MODE
 #endif
 
 #ifdef TV_MODE

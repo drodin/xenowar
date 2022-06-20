@@ -143,8 +143,12 @@ set(SRC
     sdl/audio.cpp
 )
 
+#add_definitions(-D_DEBUG)
+
 if(ANDROID OR IOS)
     add_definitions(-D__MOBILE__=1)
+else()
+    #add_definitions(-DTV_MODE)
 endif()
 
 if(ANDROID)

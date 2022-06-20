@@ -174,7 +174,11 @@ BattleScene::BattleScene( Game* game ) : Scene( game )
 		orbitButton.Init( &gamui2D, green );
 		orbitButton.SetDeco( Game::CalcDecoAtom( DECO_ORBIT, true ), Game::CalcDecoAtom( DECO_ORBIT, false ) );
 		orbitButton.SetSize( SIZE, SIZE );
+#ifndef __MOBILE__
+		orbitButton.SetVisible( false );
+#else
 		orbitButton.SetVisible( !TVMode() );
+#endif
 
 		RenderAtom menuImageAtom( (const void*)UIRenderer::RENDERSTATE_UI_NORMAL, (const void*)TextureManager::Instance()->GetTexture( "commandBarV" ), 0, 0, 1, 1 );
 		menuImage.Init( &gamui2D, menuImageAtom, false );
