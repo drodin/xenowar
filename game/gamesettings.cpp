@@ -42,12 +42,7 @@ GameSettingsManager::GameSettingsManager( const char* savepath ) : SettingsManag
 	suppressCrashLog = 0;
 	playerAI = 0;
 	battleShipParty = 0;
-	confirmMove = 
-		#ifdef ANDROID_NDK
-			1;
-		#else
-			0;
-		#endif
+	confirmMove = 0;
 	allowDrag = true;
 	testAlien = 0;
 }
