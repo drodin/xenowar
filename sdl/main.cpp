@@ -94,6 +94,8 @@ static const bool tvMode = false;
 
 const int multisample = 2;
 bool fullscreen = false;
+int originalWidth = 0;
+int originalHeight = 0;
 int screenWidth = 0;
 int screenHeight = 0;
 bool cameraIso = true;
@@ -144,6 +146,8 @@ static const U8 nightLight[30] = {
 
 void TransformXY( int x0, int y0, int* x1, int* y1 )
 {
+	x0 *= float(screenWidth) / float(originalWidth);
+	y0 *= float(screenHeight) / float(originalHeight);
 	// As a way to do scaling outside of the core, translate all
 	// the mouse coordinates so that they are reported in opengl
 	// window coordinates.
@@ -199,6 +203,8 @@ int main( int argc, char **argv )
 
 	Uint32	videoFlags  = SDL_WINDOW_OPENGL;     /* Enable OpenGL in SDL */
 
+	videoFlags |= SDL_WINDOW_ALLOW_HIGHDPI;
+
 #ifdef __MOBILE__
     videoFlags |= SDL_WINDOW_FULLSCREEN;
 #else
@@ -225,15 +231,13 @@ int main( int argc, char **argv )
 
 	// Note that our output surface is rotated from the iPod.
 	//surface = SDL_SetVideoMode( IPOD_SCREEN_HEIGHT, IPOD_SCREEN_WIDTH, 32, videoFlags );
-#ifdef __MOBILE__
-    surface = SDL_CreateWindow("", 0, 0, 0, 0, videoFlags);
-    SDL_GetWindowSize(surface,  &screenWidth, &screenHeight);
-#else
 	surface = SDL_CreateWindow("", 0, 0, screenWidth, screenHeight, videoFlags);
-#endif
 	GLASSERT( surface );
 
 	SDL_GL_CreateContext(surface);
+
+	SDL_GetWindowSize(surface, &originalWidth, &originalHeight);
+	SDL_GL_GetDrawableSize(surface, &screenWidth, &screenHeight);
 
 	int stencil = 0;
 	int depth = 0;
@@ -374,13 +378,14 @@ int main( int argc, char **argv )
 		switch( event.type )
 		{
 			case SDL_WINDOWEVENT:
-            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-				screenWidth = event.window.data1;
-				screenHeight = event.window.data2;
-                SDL_SetWindowSize( surface, screenWidth, screenHeight );
+			if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+				originalWidth = event.window.data1;
+				originalHeight = event.window.data2;
+				SDL_SetWindowSize( surface, originalWidth, originalHeight );
+				SDL_GL_GetDrawableSize(surface, &screenWidth, &screenHeight);
 				GameDeviceLoss( game );
-				GameResize( game, event.window.data1, event.window.data2, rotation );
-            }
+				GameResize( game, screenWidth, screenHeight, rotation );
+			}
 				break;
 
 			/*
