@@ -785,8 +785,7 @@
         into oblivion.
       </p>
       <p>
-        The following screens cover the basics; much more info on-line
-        at xenowar.net
+        The following screens cover the basics
       </p>
       <p>You can also access the game Settings from this help screen.</p>
     </page>
@@ -958,16 +957,21 @@
 
   <text name="introHelp" >
     <page>
-      <p>[Xenowar]</p>
       <p>
-        Xenowar. Copyright 2011-2013 Lee Thomason / Grinning Lizard Software.
+        We don't collect any personal data from our games and applications.
+        If you have any questions please don't hesitate to contact us: support+xenowar@drodin.com
+      </p>
+      <p>
+        This game is distributed under the GNU GPLv3 license.
+        Source code is available at https://github.com/drodin/xenowar
+      </p>
+      <p>
+        Copyright 2012-2022 Dmitry Rodin
+      </p>
+      <p>
+        Copyright 2011-2013 Lee Thomason / Grinning Lizard Software.
         'Face' renderer, icons, and additional art by Johan Forsberg.</p>
       <p system="tv">OUYA icons by Arruku at deviantART.</p>
-      <p>
-        Welcome to Xenowar! You can
-        submit feedback, read the community forum, or get more gameplay information
-        at xenowar.net. The gameplay wiki is at xenowar.wikispaces.com
-      </p>
       <p system="pc"> The buttons on the lower right navigate help, the lower left exits help.</p>
       <p system="android"> The buttons on the lower right navigate help, the lower left exits help.</p>
       <p system="tv"> The DPad moves between screens, and the red A button goes back.</p>
